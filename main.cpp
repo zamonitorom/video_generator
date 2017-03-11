@@ -10,30 +10,19 @@ using namespace cv;
 int W=1920;
 int H=1080;
 
-IplImage *getFrame(CvSize size,int type, CvPoint point1, CvPoint point2 = cvPoint(0, 0), CvPoint point3 = cvPoint(0, 0), CvPoint point4 = cvPoint(0, 0)) {
+IplImage *getFrame(CvSize size, CvPoint point1, CvPoint point2 = cvPoint(0, 0), CvPoint point3 = cvPoint(0, 0), CvPoint point4 = cvPoint(0, 0)) {
     IplImage *image = cvCreateImage(size, IPL_DEPTH_8U, 3);
     cvSet(image, cvScalar(0, 0, 0));
 	int radius = 100;
 	//cvRectangle(image,point2,cvPoint(point2.x+150,point2.y+150),CV_RGB(250,255, 255),5,30);
-	switch(type){
-		case 0:
-			cvCircle(image, point1, 5, CV_RGB(255, 255, 255), 0, 8);
-			break;
-		case 1:
-			cvLine(image, cvPoint(point1.x-radius/2, point1.y-radius/2), cvPoint(point1.x+radius/2, point1.y+radius/2),CV_RGB(250,255, 255),8,8);
-			cvLine(image, cvPoint(point1.x-radius/2, point1.y+radius/2), cvPoint(point1.x+radius/2, point1.y-radius/2),CV_RGB(250,255, 255),8,8);
-			//cvLine(image, cvPoint(point2.x-radius/2, point2.y), cvPoint(point2.x+radius/2, point2.y),CV_RGB(250,255, 255),8,8);
-			cvLine(image, cvPoint(point2.x, point2.y), cvPoint(point2.x+radius/2, point2.y+radius*(sqrt(3.0)/2)),CV_RGB(250,255, 255),6,8);
-			cvLine(image, cvPoint(point2.x, point2.y), cvPoint(point2.x-radius/2, point2.y+radius*(sqrt(3.0)/2)),CV_RGB(250,255, 255),6,8);
-			cvLine(image, cvPoint(point2.x+radius/2, point2.y+radius*(sqrt(3.0)/2)), cvPoint(point2.x-radius/2, point2.y+radius*(sqrt(3.0)/2)),CV_RGB(250,255, 255),6,8);
-			cvCircle(image, point3, 50, CV_RGB(255, 255, 255), -1, 8);
-		case 2:
-			//cvCircle(image, point3, 50, CV_RGB(255, 255, 255), 1, 8);
-			
-			break;
-		default:
-			break;
-	}
+	cvLine(image, cvPoint(point1.x-radius/2, point1.y-radius/2), cvPoint(point1.x+radius/2, point1.y+radius/2),CV_RGB(250,255, 255),8,8);
+	cvLine(image, cvPoint(point1.x-radius/2, point1.y+radius/2), cvPoint(point1.x+radius/2, point1.y-radius/2),CV_RGB(250,255, 255),8,8);
+	cvLine(image, cvPoint(point2.x-radius/2, point2.y), cvPoint(point2.x+radius/2, point2.y),CV_RGB(250,255, 255),8,8);
+	//cvLine(image, cvPoint(point2.x, point2.y), cvPoint(point2.x+radius/2, point2.y+radius*(sqrt(3.0)/2)),CV_RGB(250,255, 255),6,8);
+	//cvLine(image, cvPoint(point2.x, point2.y), cvPoint(point2.x-radius/2, point2.y+radius*(sqrt(3.0)/2)),CV_RGB(250,255, 255),6,8);
+	//cvLine(image, cvPoint(point2.x+radius/2, point2.y+radius*(sqrt(3.0)/2)), cvPoint(point2.x-radius/2, point2.y+radius*(sqrt(3.0)/2)),CV_RGB(250,255, 255),6,8);
+	cvCircle(image, point3, 50, CV_RGB(255, 255, 255), -1, 8);
+
     return image;
 }
 
@@ -63,7 +52,7 @@ CvPoint getPoint(int time,int flag){
 		}
 		break;
 	case 3:
-		r=100,teta=(25+time)*0.1;
+		r=100,teta=(25+time)*0.01;
 		cvpoint.x=700+2*r*cos(teta)-r*cos(2*teta);
 		cvpoint.y=400+2*r*sin(teta)-r*sin(2*teta);
 		break;
@@ -97,10 +86,10 @@ int main() {
 	ofstream cross;
 	ofstream tiangle;
 	ofstream dot;
-	cross.open("cross11.txt");
-	tiangle.open("tiangle11.txt");
-	dot.open("dot11.txt");
-	const char *filename = "capture11.avi";
+	cross.open("cross12.txt");
+	tiangle.open("tiangle12.txt");
+	dot.open("dot12.txt");
+	const char *filename = "capture12.avi";
     cvNamedWindow("Hello World", CV_WINDOW_NORMAL);
     cvSetWindowProperty("Hello World", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
     
@@ -111,13 +100,13 @@ int main() {
     // ждём нажатия клавиши
     //cvWaitKey(27);
     for (int i = 0; i < fps*60; i++) {
-		CvPoint point=getPoint(i,6);
-		CvPoint point2=getPoint(i,3);
-		CvPoint point3=getPoint(i,1);
+		CvPoint point=getPoint(i,2);
+		CvPoint point2=getPoint(i,4);
+		CvPoint point3=getPoint(i,5);
         cross << point.x << "  " << point.y <<"\n";
-		tiangle << point2.x << "  " << point2.y+43 <<"\n";
+		tiangle << point2.x << "  " << point2.y <<"\n";
 		dot<<point3.x<<"  "<<point3.y/*<<"  "<< i*/<<"\n";
-        IplImage *image = getFrame(cvSize(W,H),1,point, point2, point3);
+        IplImage *image = getFrame(cvSize(W,H),point, point2, point3);
         cvWriteFrame(writer, image);
         cvShowImage("Hello World", image);
         cvReleaseImage(&image);
